@@ -77,8 +77,41 @@
             animation: floatBadge 3.2s ease-in-out infinite;
         }
 
-        .insta-link:hover { transform: scale(1.2) rotate(15deg); }
         .insta-link svg { fill: white; width: 26px; height: 26px; }
+
+        /* --- Direct Wish Button Styling --- */
+        .direct-wish-container {
+            padding: 50px 20px 100px;
+            text-align: center;
+            opacity: 0; /* Animated */
+        }
+
+        .wish-btn {
+            display: inline-block;
+            background: linear-gradient(45deg, var(--pink), var(--gold));
+            color: white;
+            text-decoration: none;
+            padding: 20px 40px;
+            border-radius: 50px;
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 1.5rem;
+            letter-spacing: 2px;
+            box-shadow: 0 0 30px var(--pink);
+            transition: 0.4s ease;
+            animation: heart-pulse 1.5s infinite;
+        }
+
+        .wish-btn:hover {
+            transform: scale(1.1);
+            box-shadow: 0 0 50px var(--gold);
+            color: black;
+        }
+
+        @keyframes heart-pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
 
         /* --- Floating Cake Background --- */
         .bg-cake-container {
@@ -171,7 +204,6 @@
             font-family: 'Dancing Script', cursive;
             font-size: clamp(3.5rem, 10vw, 7.5rem);
             margin-top: 15px;
-            z-index: 10;
             opacity: 0;
             text-shadow: 0 0 25px var(--pink);
         }
@@ -201,7 +233,7 @@
 
         /* --- Romantic Wish Note --- */
         .romantic-note-section {
-            padding: 120px 20px;
+            padding: 120px 20px 40px;
             display: flex;
             justify-content: center;
             align-items: center;
@@ -221,19 +253,8 @@
             transform: scale(0.85);
         }
 
-        .wish-card h2 {
-            font-family: 'Great Vibes', cursive;
-            font-size: 4rem;
-            color: var(--pink);
-            margin-bottom: 28px;
-        }
-
-        .wish-card p {
-            font-size: 1.25rem;
-            line-height: 2.1;
-            color: var(--soft-white);
-            font-style: italic;
-        }
+        .wish-card h2 { font-family: 'Great Vibes', cursive; font-size: 4rem; color: var(--pink); margin-bottom: 28px; }
+        .wish-card p { font-size: 1.25rem; line-height: 2.1; color: var(--soft-white); font-style: italic; }
 
         .heart-loader { color: var(--pink); font-size: 3.5rem; margin-top: 35px; animation: beat 1s infinite alternate; }
         @keyframes beat { to { transform: scale(1.4); } }
@@ -248,7 +269,6 @@
 
     <!-- Background Music -->
     <audio id="bday-music" loop>
-        <!-- Replace with your music file link if this one expires -->
         <source src="https://www.orangefreesounds.com/wp-content/uploads/2016/08/Happy-birthday-instrumental.mp3" type="audio/mpeg">
     </audio>
 
@@ -273,11 +293,13 @@
     <div class="bg-cake-container" id="cake-bg"></div>
 
     <main>
+        <!-- Hero -->
         <section class="hero">
             <img src="profile.jpg" class="profile-img" id="main-pic" onclick="openLightbox(this.src)">
             <h1 class="main-title" id="title">Happy Birthday Ila!</h1>
         </section>
 
+        <!-- Gallery -->
         <section class="gallery-container">
             <h2 class="gallery-header">Every Moment with You</h2>
             <div class="gallery-grid">
@@ -296,6 +318,7 @@
             </div>
         </section>
 
+        <!-- Romantic Note -->
         <section class="romantic-note-section">
             <div class="wish-card" id="wish-card">
                 <h2>My Dearest Ila,</h2>
@@ -309,27 +332,30 @@
                 <div class="heart-loader">❤️</div>
             </div>
         </section>
+
+        <!-- NEW: Direct Wish Button -->
+        <div class="direct-wish-container" id="wish-btn-box">
+            <a href="https://www.instagram.com/direct/t/105359841069687/" target="_blank" class="wish-btn">
+                CLICK HERE TO WISH HER DIRECTLY 💌
+            </a>
+        </div>
     </main>
 
     <script>
         gsap.registerPlugin(ScrollTrigger);
 
-        // Music Logic
         const music = document.getElementById('bday-music');
 
-        // Full-View Lightbox Logic
         function openLightbox(src) {
             document.getElementById('lightbox-img').src = src;
             document.getElementById('lightbox').style.display = 'flex';
-            gsap.from("#lightbox-img", { scale: 0.5, opacity: 0, duration: 0.4, ease: "power2.out" });
+            gsap.from("#lightbox-img", { scale: 0.5, opacity: 0, duration: 0.4 });
         }
         function closeLightbox() {
-            gsap.to("#lightbox-img", { scale: 0.5, opacity: 0, duration: 0.3, onComplete: () => {
-                document.getElementById('lightbox').style.display = 'none';
-            }});
+            document.getElementById('lightbox').style.display = 'none';
         }
 
-        // Drifting Background Cakes Logic
+        // Floating Background Cakes
         const cakeBg = document.getElementById('cake-bg');
         for (let i = 0; i < 28; i++) {
             const cake = document.createElement('div');
@@ -346,9 +372,7 @@
         }
 
         document.getElementById('start').addEventListener('click', () => {
-            // Play Music
-            music.play().catch(e => console.log("Autoplay blocked or link broken"));
-            
+            music.play().catch(e => console.log("Music blocked"));
             gsap.to("#gate", { opacity: 0, duration: 1, onComplete: () => {
                 document.getElementById('gate').style.display = 'none';
                 startCelebration();
@@ -372,6 +396,12 @@
             gsap.to("#wish-card", {
                 opacity: 1, scale: 1, duration: 1.6,
                 scrollTrigger: { trigger: "#wish-card", start: "top 82%" }
+            });
+
+            // Reveal the Direct Wish Button at the end
+            gsap.to("#wish-btn-box", {
+                opacity: 1, duration: 1.5,
+                scrollTrigger: { trigger: "#wish-btn-box", start: "top 95%" }
             });
 
             launchContinuousParty();
